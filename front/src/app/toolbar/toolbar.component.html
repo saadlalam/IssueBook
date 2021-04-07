@@ -1,0 +1,10 @@
+<div *ngIf="showDefaultBar" class="toolbar" role="banner">
+  <span  class="app-title" >{{title}}</span>
+    <div class="spacer"></div>
+    <button [routerLink]="['/issue']"  class="action-icon" mat-icon-button>
+      <mat-icon>add</mat-icon>
+    </button>
+    <button [routerLink]="['/issues']"  mat-icon-button class="action-icon">
+      <mat-icon>list</mat-icon>
+    </button>
+</div>

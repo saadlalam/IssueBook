@@ -1,0 +1,33 @@
+.toolbar {
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  background-color: #1976d2;
+  color: white;
+  font-weight: 600;
+}
+
+.app-title:hover{
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.app-title {
+  padding-left: 20px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.action-icon {
+  color: white;
+  position: relative;
+  margin-bottom: 15px;
+  margin-right: 10px;
+}
