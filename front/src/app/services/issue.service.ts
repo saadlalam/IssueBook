@@ -39,4 +39,11 @@ export class IssueService {
   return listIssues;
   }
 
+  async getIssue(issueId: string): Promise<Issue> {
+    const issueData = await this.db.collection(environment.issuesPath)
+      .doc(issueId).get().toPromise();
+    const data = issueData.data() as Issue;
+    return data;
+  }
+
 }

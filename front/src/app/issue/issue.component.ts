@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Status } from '../models/issue';
+import { Status, Issue } from '../models/issue';
 import { IssueService } from '../services/issue.service';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { DocumentData, DocumentReference } from '@firebase/firestore-types';
@@ -37,6 +37,7 @@ export class IssueComponent implements OnInit, OnChanges {
   loading = false;
   hasScreenShot = false;
   currentIssueRef: DocumentReference<DocumentData> | undefined;
+  currentIssueId: string = '';
   screenshot: SafeResourceUrl = '';
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
   constructor(private formBuilder: FormBuilder,
@@ -47,11 +48,32 @@ export class IssueComponent implements OnInit, OnChanges {
     private issueService: IssueService) { }
 
   ngOnInit(): void {
+    this.route.params.subscribe(async (path: any) => {
+        if (path.id) {
+          this.loading = true;
+          this.currentIssueId = path.id;
+          const loadedIssue = await this.issueService.getIssue(this.currentIssueId);
+          this.issueData.patchValue(loadedIssue);
+          if (loadedIssue.shot) {
+            this.setScreenShot(loadedIssue)
+          }
+          if (loadedIssue.tags) {
+            this.tags = loadedIssue.tags;
+          }
+          this.loading = false;
+        }
+    })
   }
 
 
   ngOnChanges() {
-    if (this.issueData.controls.shot.value) {
+    const issueData = this.issueData.getRawValue();
+    this.setScreenShot(issueData);
+  }
+
+
+  setScreenShot(issueData: Partial<Issue>) {
+    if (issueData && issueData.shot) {
       this.screenshot = this._sanitizer.bypassSecurityTrustResourceUrl(this.issueData.controls.shot.value);
       this.hasScreenShot = true;
     }
@@ -89,7 +111,6 @@ export class IssueComponent implements OnInit, OnChanges {
   }
 
   openScreenShot(event: any) {
-    console.log("event ?", event)
     const url = this.issueData.controls.shot.value;
     const dialogConfig = new MatDialogConfig();
     dialogConfig.autoFocus = false;
@@ -98,12 +119,6 @@ export class IssueComponent implements OnInit, OnChanges {
       url
     }
     this.dialog.open(ScreenshotComponent, dialogConfig);
-  }
-
-
-  setDescription(description: any) {
-    console.log(description);
-    console.log(this.issueData.getRawValue());
   }
 
 
@@ -134,11 +149,10 @@ export class IssueComponent implements OnInit, OnChanges {
 
 
   add(event: MatChipInputEvent): void {
-    console.log("event ?", event)
     const input = event.input;
     const value = event.value;
 
-    if ((value || '').trim()) {
+    if ((value || '').trim() && this.issueData.controls.tags.value.length < 5) {
       this.tags.push(value.trim());
       this.issueData.controls.tags.setValue(this.tags)
     }
