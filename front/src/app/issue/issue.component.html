@@ -1,1 +1,103 @@
-<p>issue works!</p>
+<div class="new-issue-page">
+  <span class="title">New issue</span>
+  <div *ngIf="loading" class="loader"></div>
+  <div class="form-content" [formGroup]="issueData">
+    <div class="top-section">
+      <div class="issue-identity">
+        <!--TITLE-->
+        <mat-form-field appearance="fill">
+          <mat-label>TITLE</mat-label>
+          <input formControlName="title" matInput />
+        </mat-form-field>
+        <!--TITLE-->
+
+        <!--ENVIRONMENT-->
+        <mat-form-field appearance="fill">
+          <mat-label>ENVIRONMENT</mat-label>
+          <input formControlName="environment" matInput />
+        </mat-form-field>
+        <!--ENVIRONMENT-->
+
+        <!--STATUS-->
+        <mat-form-field appearance="fill">
+          <mat-label>STATUS</mat-label>
+          <mat-select formControlName="status">
+            <mat-option
+              *ngFor="let option of statusOptions"
+              [value]="option"
+              >{{ option }}</mat-option
+            >
+          </mat-select>
+        </mat-form-field>
+        <!--STATUS-->
+
+
+        <!--TAGS-->
+
+        <mat-form-field appearance="fill">
+          <mat-label>TAGS</mat-label>
+          <mat-chip-list #chipList aria-label="Tag selection">
+            <mat-chip *ngFor="let tag of issueData.controls.tags.value" selectable="false"
+            removable="true" (removed)="remove(tag)">
+              {{tag}}
+              <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+            <input placeholder="Ex. Python sqlalchemy"
+                   [matChipInputFor]="chipList"
+                   [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                   matChipInputAddOnBlur="true"
+                   (matChipInputTokenEnd)="add($event)">
+          </mat-chip-list>
+        </mat-form-field>
+
+
+        <!--TAGS-->
+    </div>
+    <mat-divider [vertical]="true"></mat-divider>
+    <div class="issue-detail">
+
+      <div *ngIf="hasScreenShot" class="image-div">
+        <button (click)="removeScreenShot()" matSuffix class="remove-picture" mat-icon-button>
+          <mat-icon>cancel</mat-icon>
+        </button>
+        <img
+          (click)="openScreenShot($event)"
+          [src]=screenshot
+          alt="Issue screenshot"
+          class="image"
+        />
+      </div>
+      <div class="upload-button">
+        <button [disabled]="isSaving" (click)="fileInput.click()" *ngIf="!hasScreenShot" class="new-picture-button" mat-button>
+          <mat-icon>add_photo_alternate</mat-icon>
+          Attach a screenshot
+        </button>
+        <span style="display: none;">
+          <input
+            #fileInput
+            type="file"
+            accept="image/*"
+            (change)="attachScreenShot($event)"
+            multiple=false
+          />
+        </span>
+      </div>
+      <div class="description-section">
+        <textarea class="description"
+                  placeholder="Ex. Steps to reproduce..."
+                  name="Description"
+                  formControlName="description"
+                  maxlength="50000"
+                  #description
+                  ></textarea>
+              <mat-hint class="description-hint" align="end">{{description.value.length}} / 50000</mat-hint>
+        </div>
+
+    </div>
+    </div>
+  </div>
+</div>
+<div class="action-buttons">
+  <div class="clear-button"><button [disabled]="loading" (click)="clearForm()"  mat-button>CLEAR</button></div>
+  <div class="save-button"><button [disabled]="loading" (click)="saveIssue()" color="primary" mat-stroked-button>SAVE</button></div>
+</div>

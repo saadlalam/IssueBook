@@ -18,6 +18,7 @@ export class Issue {
   title: string | undefined;
   creationDate: Date | undefined;
   updateDate: Date | undefined;
+  tags: string[] | undefined;
   environment: string | undefined;
   description: string | undefined;
   reporter: string | undefined;

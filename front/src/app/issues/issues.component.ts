@@ -4,6 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Issue } from '../models/issue';
+import { IssueService } from '../services/issue.service';
 
 @Component({
   selector: 'app-issues',
@@ -15,47 +16,22 @@ export class IssuesComponent implements OnInit {
   dataSource : MatTableDataSource<any[]> | any  = new MatTableDataSource([]);
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined ;
   @ViewChild(MatSort) sort: MatSort | undefined;
-  issues: Partial<Issue>[] = [
-    {
-      id: '1',
-      title: 'First issue',
-      environment: 'Python',
-      status: Status.OPEN,
-      creationDate: new Date(),
-      updateDate: undefined
-
-    },
-    {
-      id: '2',
-      title: 'Second issue',
-      environment: 'Typescript',
-      status: Status.OPEN,
-      creationDate: new Date(),
-      updateDate: undefined
-
-    },
-    {
-      id: '1',
-      title: 'First issue',
-      environment: 'Angular',
-      status: Status.OPEN,
-      creationDate: new Date(),
-      updateDate: undefined
-
-    }
-  ];
+  issues: Partial<Issue>[] = [];
   loading = false
-  constructor() { }
+  constructor(private issueService: IssueService) { }
 
   ngOnInit(): void {
     this.loadIssues();
   }
 
 
-  loadIssues() {
+  async loadIssues() {
+    this.loading = true;
+    this.issues = await this.issueService.getIssues();
     this.dataSource = new MatTableDataSource<any>(this.issues);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    this.loading = false;
   }
 
 }

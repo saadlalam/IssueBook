@@ -1,0 +1,136 @@
+.form-content {
+  padding-top: 120px;
+
+}
+
+
+.title {
+  position: relative;
+  top: 70px;
+  font-size: x-large;
+  display: flex;
+  justify-content: center;
+}
+
+.top-section {
+  display: flex;
+  justify-content: space-around;
+}
+
+
+.issue-identity {
+  width: 450px;
+  display: flex;
+  flex-direction: column;
+}
+
+.issue-detail {
+  width: 450px;
+  //display: flex;
+  //justify-content: center;
+}
+
+.new-issue-page {
+  position: relative;
+  top: 40px;
+}
+
+
+.new-picture-button {
+  background: #f3f3f3;
+  width: 200px;
+  height: 100px;
+  position: relative;
+  top: 30px;
+}
+
+.image-div {
+  //width: 100%;
+  //height: 80%;
+  background: transparent;
+}
+
+
+.remove-picture {
+  position: absolute;
+  color: white;
+}
+
+
+.image {
+  width: 400px;
+  height: 200px;
+}
+
+
+.description-section {
+  //padding-top: 90px;
+  //display: flex;
+  //justify-content: center;
+  position: relative;
+  top: 50px;
+}
+
+.description {
+  background: #fbf9f9;
+  width: 90%!important;
+  height: 240px;
+  border-color: transparent;
+  resize: none;
+}
+
+
+.description-hint {
+  position: absolute;
+  bottom: -20px;
+  right: 50px;
+}
+
+
+.action-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  position: relative;
+  top: 140px;
+}
+
+.save-button {
+  padding-right: 30px;
+}
+
+.clear-button {
+  padding-right: 20px;
+}
+
+.upload-button {
+  display: flex;
+  justify-content: center;
+}
+
+
+
+.loader {
+  position: absolute;
+  border-radius: 50%;
+  border: 8px solid rgb(64, 109, 160);
+  border-right-color: #f3f3f3;
+  border-left-color: #f3f3f3;
+  width: 50px;
+  height: 50px;
+  left: 538px;
+  top: 50%;
+  -webkit-animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
