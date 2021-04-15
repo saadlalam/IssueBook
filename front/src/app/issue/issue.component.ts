@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Status } from '../models/issue';
+import { Status, Issue } from '../models/issue';
 import { IssueService } from '../services/issue.service';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { DocumentData, DocumentReference } from '@firebase/firestore-types';
@@ -36,7 +36,8 @@ export class IssueComponent implements OnInit, OnChanges {
   isSaving = false;
   loading = false;
   hasScreenShot = false;
-  currentIssueRef: DocumentReference<DocumentData> | undefined;
+  currentIssueRef: DocumentReference<DocumentData> | any;
+  currentIssueId: string = '';
   screenshot: SafeResourceUrl = '';
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
   constructor(private formBuilder: FormBuilder,
@@ -47,11 +48,34 @@ export class IssueComponent implements OnInit, OnChanges {
     private issueService: IssueService) { }
 
   ngOnInit(): void {
+    this.route.params.subscribe((path: any) => {
+        if (path.id) {
+          this.loading = true;
+          this.currentIssueId = path.id;
+          this.issueService.getIssueById(this.currentIssueId).subscribe((loadedIssue: any) => {
+            this.issueData.patchValue(loadedIssue);
+            if (loadedIssue.shot) {
+              this.setScreenShot(loadedIssue)
+            }
+            if (loadedIssue.tags) {
+              this.tags = loadedIssue.tags;
+            }
+            this.loading = false;
+          });
+
+        }
+    })
   }
 
 
   ngOnChanges() {
-    if (this.issueData.controls.shot.value) {
+    const issueData = this.issueData.getRawValue();
+    this.setScreenShot(issueData);
+  }
+
+
+  setScreenShot(issueData: Partial<Issue>) {
+    if (issueData && issueData.shot) {
       this.screenshot = this._sanitizer.bypassSecurityTrustResourceUrl(this.issueData.controls.shot.value);
       this.hasScreenShot = true;
     }
@@ -89,7 +113,6 @@ export class IssueComponent implements OnInit, OnChanges {
   }
 
   openScreenShot(event: any) {
-    console.log("event ?", event)
     const url = this.issueData.controls.shot.value;
     const dialogConfig = new MatDialogConfig();
     dialogConfig.autoFocus = false;
@@ -101,30 +124,27 @@ export class IssueComponent implements OnInit, OnChanges {
   }
 
 
-  setDescription(description: any) {
-    console.log(description);
-    console.log(this.issueData.getRawValue());
-  }
-
-
   saveIssue() {
     this.loading = true;
     console.log(this.issueData.getRawValue());
     const issue = this.issueData.getRawValue()
-    this.issueService.addIssue(issue).then(ref => {
-      this.currentIssueRef = ref;
-      this.loading = false;
-      this.navigateToIssue(this.currentIssueRef)
-      issue.creationDate = new Date();
-      this.currentIssueRef.update(issue);
+    issue.creationDate = new Date();
+    this.issueService.addIssue(issue).subscribe((ref: any) => {
+      if (ref && ref.id) {
+        console.log("ref ?", ref)
+        this.currentIssueRef = ref.id;
+        this.loading = false;
+        this.currentIssueRef && this.navigateToIssue(this.currentIssueRef);
+      }
     })
 
   }
 
-  navigateToIssue(issueRef: DocumentReference<DocumentData>) {
-    const issueId = issueRef.id;
-    const state = issueRef;
-    this.router.navigate(['issue/' + issueId], {state});
+  navigateToIssue(issueRef: string) {
+    if (issueRef) {
+      this.router.navigate(['issue/' + issueRef]);
+    }
+
   }
 
   clearForm() {
@@ -134,11 +154,10 @@ export class IssueComponent implements OnInit, OnChanges {
 
 
   add(event: MatChipInputEvent): void {
-    console.log("event ?", event)
     const input = event.input;
     const value = event.value;
 
-    if ((value || '').trim()) {
+    if ((value || '').trim() && this.issueData.controls.tags.value.length < 5) {
       this.tags.push(value.trim());
       this.issueData.controls.tags.setValue(this.tags)
     }

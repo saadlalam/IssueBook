@@ -25,7 +25,7 @@
     <ng-container matColumnDef="creationDate">
       <th mat-header-cell *matHeaderCellDef> CREATED </th>
       <td mat-cell *matCellDef="let element">
-        <span *ngIf="element.creationDate">{{element.creationDate.toDate() || '' | date : 'mediumDate'}}</span>
+        <span *ngIf="element.creationDate">{{element.creationDate | date : 'mediumDate'}}</span>
       </td>
     </ng-container>
 
@@ -37,7 +37,19 @@
       </td>
     </ng-container>
 
+    <!-- ACTIONS Column -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let element">
+        <button [routerLink]="['/issue/' + element.id]" mat-icon-button>
+          <mat-icon>edit</mat-icon>
+        </button>
+
+      </td>
+    </ng-container>
+
     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
 </div>

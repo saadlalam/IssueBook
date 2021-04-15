@@ -4,7 +4,6 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Issue } from '../models/issue';
-import { DocumentReference } from '@firebase/firestore-types';
 
 
 
@@ -16,27 +15,23 @@ export class IssueService {
   constructor(private http: HttpClient, private db: AngularFirestore) { }
 
 
-
-  async addIssue(issue: Partial<Issue>): Promise<DocumentReference> {
-    const docRef: DocumentReference<any> = await this.db.collection(environment.issuesPath).add(issue);
-    return docRef;
-  }
+addIssue(issue: Partial<Issue>): Observable<object> {
+  return this.http.post(environment.rest + '/issues/new', {issue});
+}
 
 
-  async getIssues(): Promise<Issue[]> {
-    const querySnap = await this.db
-    .collection(environment.issuesPath)
-    .get().toPromise();
+loadIssues(): Observable<object> {
+  return this.http.get(environment.rest + '/issues');
+}
 
-  const listIssues: Issue[] = [];
-  querySnap.docs.forEach((value: any) => {
-    const data = value.data();
-    data.id = value.id;
-    listIssues.push(data);
-    listIssues.sort();
-  });
 
-  return listIssues;
-  }
+removeIssue(issueId: string): Observable<object>{
+  return this.http.delete(environment.rest + '/issues/delete' + issueId);
+}
+
+getIssueById(issueId: string): Observable<object>{
+  return this.http.get(environment.rest + '/issues/' + issueId);
+}
+
 
 }
