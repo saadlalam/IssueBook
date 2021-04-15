@@ -1,11 +1,11 @@
 .table-container {
-  //height: 400px;
-  //overflow: auto;
   display: flex;
   padding-top: 80px;
-  justify-content: center;
+  margin-right: 20px;
+  margin-left: 20px;
+  flex-direction: column;
 }
 
 table {
-  width: 90%;
+  width: 100%;
 }

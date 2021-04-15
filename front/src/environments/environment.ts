@@ -6,9 +6,6 @@ export const environment = {
   production: false,
   rest: 'http://localhost:5000/api',
   issuesPath: 'issues',
-  firebase: {
-    //firebase conf
-  }
 };
 
 /*

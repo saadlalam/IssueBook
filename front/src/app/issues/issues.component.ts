@@ -27,19 +27,17 @@ export class IssuesComponent implements OnInit {
   }
 
 
-  async loadIssues() {
+  loadIssues() {
     this.loading = true;
-    this.issues = await this.issueService.getIssues();
-    this.dataSource = new MatTableDataSource<any>(this.issues);
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-    this.loading = false;
-  }
-
-
-  navigateToIssue(issueRef: string) {
-    console.log(issueRef)
-    this.router.navigate(['issue/' + issueRef]);
+    this.issueService.loadIssues().subscribe((res: Partial<Issue>[] | any) => {
+      if (res) {
+        this.issues = res;
+        this.dataSource = new MatTableDataSource<any>(this.issues);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this.loading = false;
+      }
+    });
   }
 
 }
